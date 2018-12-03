@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Address Result{% endblock %}
+
+{% block content %}
+
+{{ postcodeResults }}
+
+
+<div class="page__container container">
+    <div class="grid grid--spaced">
+        <div class="grid__col col-12@m">
+            <h1 class="jupiter">Search for an address by postcode</h1>
+        </div>
+
+
+            <form action="" method="post" novalidate>
+
+                {{ form.hidden_tag() }}
+                <fieldset class="searchfield venus">
+                    <div class="grid__col col-12@m">
+                        <div class="field">
+                            <label class="label venus " for="postcode">
+                                Enter postcode
+                            </label>
+                            {{ form.postcode(class_='input input--text', placeholder='For example, EX2 6GA', value=postcodeResults.response.postcode) }}
+                        </div>
+                    </div>
+
+                    <div class="grid__col col-6@m">
+                        <div class="field">
+                            <label class="label venus " for="classificationFilter">
+                                {{ form.classificationFilter.label }}
+                            </label>
+                            {{ form.classificationFilter(class_='input input--text', placeholder='For example residential, commercial, RD06', value=postcodeResults.response.filter) }}
+                        </div>
+                    </div>
+
+                    <div class="grid__col col-6@m">
+
+                        <div class="field field--radio field--multiplechoice">
+                            <fieldset>
+                                <legend class="field__legend mars ">{{ form.historical.label }}</legend>
+                                <div class="field__item js-focusable-box">
+                                    <input class="input input--radio js-focusable" name="historical" value="true" id="yes" type="radio">
+                                    <label class="label label--inline venus " for="yes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="field__item js-focusable-box">
+                                    <input class="input input--radio js-focusable" name="historical" value="false" id="no" type="radio">
+                                    <label class="label label--inline venus " for="no">
+                                        No
+                                    </label>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                    </div>
+
+                    <div class="grid__col col-12@m">
+                        {{ form.submit(class_='btn') }}
+                    </div>
+
+                </fieldset>
+
+
+            </form>
+
+        <div class="grid__col col-12@m">
+            <h2 class="saturn">We have matched {{ postcodeResults.response.total }} addresses</h2>
+        </div>
+
+    </div>
+
+
+
+    <div class="grid">
+
+                    {% for singleResult in postcodeResults.response.addresses %}
+                    <div class="grid__col col-12@m">
+                        <div class="summary">
+                            <h2 class="summary__title neptune" id=""><a class="result-short-form-link" href="{{ url_for('result', uprn = singleResult.uprn) }}">{{ singleResult.formattedAddressNag }}</a></h2>
+                            <div class="summary__block">
+                                <div class="summary__item summary__item--multiple">
+                                    <div class="grid">
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__label mars">UPRN</div>
+                                        </div>
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__answer venus">{{ singleResult.uprn }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="grid">
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__label mars">Classification</div>
+                                        </div>
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__answer venus">
+                                                {% for classification in classList.classifications %}
+                                                {% if classification.code == singleResult.nag.classificationCode %}
+                                                {{ classification.label }}
+                                                {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid">
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__label mars">Local Authority</div>
+                                        </div>
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__answer venus">{{ singleResult.nag.localCustodianName }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="grid">
+                                        <div class="grid__col col-12@m">
+                                            <div class="summary__label mars">
+                                                {% if singleResult.geo.isEmpty %}
+
+                                                {% if singleResult.nag.isEmpty %}
+
+                                                <span class="map-link-txt">
+                                                    <a href="https://maps.google.com/?q=@address.paf.map { paf =>50.855,-1.18@paf.buildingNumber&ll=50.855,-1.18@paf.buildingNumber&z=20&t=h }" target="_blank">Location map</a>
+                                                </span>
+
+                                                {% else %}
+
+                                                <span class="map-link-txt">
+                                                    <a href="https://maps.google.com/?q=50.855,-1.187&ll=50.855,-1.187&z=20&t=h" target="_blank">Location map</a>
+                                                </span>
+
+                                                {% endif %}
+
+                                                {% else %}
+
+                                                <span class="map-link-txt">
+                                                    <a href="https://maps.google.com/?q={{ singleResult.geo.latitude }},{{ singleResult.geo.longitude }}&ll={{ singleResult.geo.latitude }},{{ singleResult.geo.longitude }}&z=20&t=h" target="_blank">Location map</a>
+                                                </span>
+
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+
+            <div class="grid__col col12 u-ml-m u-mt-l u-mb-xl">
+
+                <nav class="pagination u-mb-l" role="navigation" aria-label="Pagination">
+                    <div class="mars pagination__position u-hidden" aria-label="Current page (Page {{page}})">Page {{page}}</div>
+                    <ul class="pagination__items">
+                        {% if page > 1 %}
+                            <li class="pagination__item pagination__item--previous"><a href="?page={{(page - 1)}}{{queryParams}}" class="pagination__link" rel="prev" aria-label="Go to the previous page (Page {{page - 1}})">Previous</a></li>
+                        {% endif %}
+                        {% if page > 3 %}
+                            <li class="pagination__item"><a href="?page=1{{queryParams}}" class="pagination__link" aria-label="Go to page 1">1</a></li>
+                        {% endif %}
+                        {% if (maxPage >= 5) and (page > 4) %}
+                            <li class="pagination__item pagination__item--gap">&hellip;</li>
+                        {% endif %}
+
+                        {% for pageNumber in range((page-4), (page+5)) %}
+                            {% if pageNumber > 0 and pageNumber < maxPage %}
+                                {% if pageNumber == page %}
+                                    <li class="pagination__item pagination__item--active pagination__item--current"><a href="?page={{pageNumber}}{{queryParams}}" class="pagination__link" aria-label="Current page ({{pageNumber}} of {{maxPage}})" aria-current="true">{{pageNumber}}</a></li>
+                                {% elif pageNumber == page-1 %}
+                                    <li class="pagination__item"><a href="?page={{pageNumber}}{{queryParams}}" class="pagination__link" rel="prev" aria-label="Go to page {{pageNumber}}">{{pageNumber}}</a></li>
+                                {% elif pageNumber == page+1 %}
+                                    <li class="pagination__item"><a href="?page={{pageNumber}}{{queryParams}}" class="pagination__link" rel="next" aria-label="Go to page {{pageNumber}}">{{pageNumber}}</a></li>
+                                {% elif (pageNumber == page+2) or (pageNumber == page-2) or (page < 4 and pageNumber < 6) or (page > maxPage - 3 and pageNumber > maxPage - 5) %}
+                                    <li class="pagination__item"><a href="?page={{pageNumber}}{{queryParams}}" class="pagination__link" aria-label="Go to page {{pageNumber}}">{{pageNumber}}</a></li>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if (maxPage >= 5) and (page < maxPage-3) %}
+                            <li class="pagination__item pagination__item--gap">&hellip;</li>
+                        {% endif %}
+
+                        {% if page == maxPage %}
+                            <li class="pagination__item pagination__item--active pagination__item--current"><a href="?page={{maxPage}}{{queryParams}}" class="pagination__link" aria-label="Current page ({{maxPage}} of {{maxPage}})" aria-current="true">{{maxPage}}</a></li>
+                        {% elif page == (maxPage - 1) %}
+                            <li class="pagination__item"><a href="?page={{maxPage}}{{queryParams}}" class="pagination__link" rel="next" aria-label="Go to page {{maxPage}}">{{maxPage}}</a></li>
+                        {% else %}
+                            <li class="pagination__item"><a href="?page={{maxPage}}{{queryParams}}" class="pagination__link" aria-label="Go to page {{maxPage}}">{{maxPage}}</a></li>
+                        {% endif %}
+
+                        {% if page < maxPage %}
+                            <li class="pagination__item pagination__item--next"><a href="?page={{(page + 1)}}{{queryParams}}" class="pagination__link" aria-label="Go to the next page (Page {{page + 1}})" rel="next">Next</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+
+            </div>
+
+    </div>
+</div>
+
+{% endblock %}
+

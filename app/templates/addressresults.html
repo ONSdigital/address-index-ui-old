@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Address Result{% endblock %}
+
+{% block content %}
+
+{{ addressResults }}
+
+
+<div class="page__container container">
+    <div class="grid grid--spaced">
+        <div class="grid__col col-12@m">
+            <h1 class="jupiter">Search for an address</h1>
+        </div>
+
+
+            <form action="" method="post" novalidate>
+
+                {{ form.hidden_tag() }}
+                <fieldset class="searchfield venus">
+                    <div class="grid__col col-12@m">
+                        <div class="field">
+                            <label class="label venus " for="address">
+                                Enter address
+                            </label>
+                            {{ form.address(class_='input input--text', placeholder='For example, 16 James Street Swindon SN1 3HE', value=searchterm) }}
+                        </div>
+                    </div>
+
+                    <div class="grid__col col-6@m">
+                        <div class="field">
+                            <label class="label venus " for="classificationFilter">
+                                {{ form.classificationFilter.label }}
+                            </label>
+                            {{ form.classificationFilter(class_='input input--text', placeholder='For example residential, commercial, RD06', value=addressResults.response.filter) }}
+                        </div>
+                    </div>
+
+                    <div class="grid__col col-6@m">
+
+                        <div class="field field--radio field--multiplechoice">
+                            <fieldset>
+                                <legend class="field__legend mars ">{{ form.historical.label }}</legend>
+                                <div class="field__item js-focusable-box">
+                                    <input class="input input--radio js-focusable" name="historical" value="true" id="yes" type="radio">
+                                    <label class="label label--inline venus " for="yes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="field__item js-focusable-box">
+                                    <input class="input input--radio js-focusable" name="historical" value="false" id="no" type="radio">
+                                    <label class="label label--inline venus " for="no">
+                                        No
+                                    </label>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                    </div>
+
+                    <div class="grid__col col-12@m">
+                        {{ form.submit(class_='btn') }}
+                    </div>
+
+                </fieldset>
+
+
+            </form>
+
+        <div class="grid__col col-12@m">
+            <h2 class="saturn">We have matched {{ addressResults.response.total }} addresses</h2>
+        </div>
+
+    </div>
+
+
+
+    <div class="grid grid--spaced">
+
+                    {% for singleResult in addressResults.response.addresses %}
+                    <div class="grid__col col-12@m">
+                        <div class="summary">
+                            <h2 class="summary__title neptune" id=""><a class="result-short-form-link" href="{{ url_for('result', uprn = singleResult.uprn) }}">{{ singleResult.formattedAddressNag }}</a></h2>
+                            <div class="summary__block">
+                                <div class="summary__item summary__item--multiple">
+                                    <div class="grid">
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__label mars">UPRN</div>
+                                        </div>
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__answer venus">{{ singleResult.uprn }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="grid">
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__label mars">Classification</div>
+                                        </div>
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__answer venus">
+
+                                                {% for classification in classList.classifications %}
+                                                    {% if classification.code == singleResult.nag.classificationCode %}
+                                                        {{ classification.label }}
+                                                    {% endif %}
+                                                {% endfor %}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid">
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__label mars">Local Authority</div>
+                                        </div>
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__answer venus">{{ singleResult.nag.localCustodianName }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="grid">
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__label mars">Score</div>
+                                        </div>
+                                        <div class="grid__col col-6@m">
+                                            <div class="summary__answer venus">{{ round(singleResult.confidenceScore * 100) }}%</div>
+                                        </div>
+                                    </div>
+                                    <div class="grid">
+                                        <div class="grid__col col-12@m">
+                                            <div class="summary__label mars">
+                                                {% if singleResult.geo.isEmpty %}
+
+                                                {% if singleResult.nag.isEmpty %}
+
+                                                <span class="map-link-txt">
+                                                    <a href="https://maps.google.com/?q=@address.paf.map { paf =>50.855,-1.18@paf.buildingNumber&ll=50.855,-1.18@paf.buildingNumber&z=20&t=h }" target="_blank">Location map</a>
+                                                </span>
+
+                                                {% else %}
+
+                                                <span class="map-link-txt">
+                                                    <a href="https://maps.google.com/?q=50.855,-1.187&ll=50.855,-1.187&z=20&t=h" target="_blank">Location map</a>
+                                                </span>
+
+                                                {% endif %}
+
+                                                {% else %}
+
+                                                <span class="map-link-txt">
+                                                    <a href="https://maps.google.com/?q={{ singleResult.geo.latitude }},{{ singleResult.geo.longitude }}&ll={{ singleResult.geo.latitude }},{{ singleResult.geo.longitude }}&z=20&t=h" target="_blank">Location map</a>
+                                                </span>
+
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+        <div class="grid__col col-12@m">
+            <div id="pager">
+                <div class="pager-container mars">
+
+                    {% if ((addressResults.response.limit + addressResults.response.offset) / addressResults.response.limit) > 1 %}
+                    <a href='?offset={{addressResults.response.offset - addressResults.response.limit}}'><span class="pager-option">Previous</span></a>
+                    {% endif %}
+
+                    {% for page in range(1, (round(addressResults.response.total / addressResults.response.limit)) + 1) %}
+                    {% if page == ((addressResults.response.limit + addressResults.response.offset) / addressResults.response.limit)|int %}
+                    <span class="pager-current pager-option">{{ page }}</span>
+                    {% else %}
+                    <a href='?offset={{ (page * addressResults.response.limit) - addressResults.response.limit }}'><span class="pager-option">{{ page }}</span></a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if(((addressResults.response.limit + addressResults.response.offset) / addressResults.response.limit) < (addressResults.response.total / addressResults.response.limit)) %}
+                    <a href='?offset={{addressResults.response.offset + addressResults.response.limit}}'><span class="pager-option">Next</span></a>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
