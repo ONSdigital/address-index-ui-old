@@ -98,7 +98,7 @@
                                         <div class="grid__col col-6@m">
                                             <div class="summary__answer venus">
                                                 {% for classification in classList.classifications %}
-                                                {% if classification.code == singleResult.nag.classificationCode %}
+                                                {% if classification.code == singleResult.classificationCode %}
                                                 {{ classification.label }}
                                                 {% endif %}
                                                 {% endfor %}

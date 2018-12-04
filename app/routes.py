@@ -15,7 +15,7 @@ maxPageResults = 1
 
 
 def getClassList():
-    classifications = requests.get(host + "/codelists/classification")
+    classifications = requests.get(host + "/classifications")
     return json.loads(classifications.text)
 
 @app.context_processor
@@ -48,7 +48,7 @@ def results(postcode):
 
     if form.validate_on_submit():
 
-        postcodeQueryParams = "?classificationfilter=" + form.classificationFilter.data + "&historical=" + form.historical.data
+        postcodeQueryParams = "?classificationfilter=" + form.classificationFilter.data + "&historical=" + form.historical.data + "&verbose=true"
 
         return redirect('/postcode/' + form.postcode.data + postcodeQueryParams )
 
@@ -56,7 +56,7 @@ def results(postcode):
     offset = (page * maxPageResults) - maxPageResults
 
     uri = host + "/addresses/postcode/" + postcode
-    params = {'classificationfilter' : classificationfilter, 'limit' : maxPageResults, 'offset' : offset, 'historical' : request.args.get('historical', 'True')}
+    params = {'classificationfilter' : classificationfilter, 'limit' : maxPageResults, 'offset' : offset, 'historical' : request.args.get('historical', 'True'), 'verbose': 'true'}
     response = requests.get(uri, params=params )
 
     postcodeResults = json.loads(response.text)
@@ -64,7 +64,7 @@ def results(postcode):
     maxPage = math.ceil(postcodeResults['response']['total'] / maxPageResults)
     # maxPage = 7
 
-    queryParams = "&historical=" + request.args.get('historical', 'True')
+    queryParams = "&historical=" + request.args.get('historical', 'True') + "&verbose=true"
     if classificationfilter :
         queryParams = queryParams + "&classificationfilter=" + classificationfilter
 
@@ -77,7 +77,8 @@ def results(postcode):
 def result(uprn):
 
     uri = host + "/addresses/uprn/" + uprn
-    response = requests.get(uri)
+    params = {'verbose': 'true'}
+    response = requests.get(uri, params=params)
 
     uprnResult = json.loads(response.text)
 
@@ -104,7 +105,7 @@ def addressResults(address):
     form = addressForm()
     if form.validate_on_submit():
 
-        addressQueryParams = "?classificationfilter=" + form.classificationFilter.data + "&historical=" + form.historical.data
+        addressQueryParams = "?classificationfilter=" + form.classificationFilter.data + "&historical=" + form.historical.data + "&verbose=true"
 
         return redirect('/addresses/' + form.address.data + addressQueryParams )
 
@@ -112,7 +113,7 @@ def addressResults(address):
     offset = request.args.get('offset', 0)
 
     uri = host + "/addresses?input=" + address
-    params = {'classificationfilter' : classificationfilter, 'limit' : maxPageResults, 'offset' : offset, 'historical' : request.args.get('historical', 'True')}
+    params = {'classificationfilter' : classificationfilter, 'limit' : maxPageResults, 'offset' : offset, 'historical' : request.args.get('historical', 'True'), 'verbose': 'true'}
     response = requests.get(uri, params=params )
 
     addressResults = json.loads(response.text)

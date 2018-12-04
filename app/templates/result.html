@@ -59,7 +59,7 @@
                                     <td class="venus">
 
                                         {% for classification in classList.classifications %}
-                                        {% if classification.code == uprnResult.response.address.nag.classificationCode %}
+                                        {% if classification.code == uprnResult.response.address.classificationCode %}
                                         {{ classification.label }}
                                         {% endif %}
                                         {% endfor %}
@@ -68,11 +68,11 @@
                                 </tr>
                                 <tr>
                                     <td>Local Authority</td>
-                                    <td class="venus">{% filter capitalize %}{{ uprnResult.response.address.nag.localCustodianName }}{% endfilter %}</td>
+                                    <td class="venus">{% filter capitalize %}{{ uprnResult.response.address.nag(0).localCustodianName }}{% endfilter %}</td>
                                 </tr>
                                 <tr>
                                     <td>Local Authority code</td>
-                                    <td class="venus">{{ uprnResult.response.address.nag.localCustodianGeogCode }}</td>
+                                    <td class="venus">{{ uprnResult.response.address.nag(0).localCustodianGeogCode }}</td>
                                 </tr>
                             </table>
                         </section>
