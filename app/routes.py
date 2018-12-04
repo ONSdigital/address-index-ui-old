@@ -61,7 +61,7 @@ def results(postcode):
 
     postcodeResults = json.loads(response.text)
 
-    maxPage = math.ceil(postcodeResults['response']['total'] / maxPageResults)
+    maxPage = int(math.ceil(postcodeResults['response']['total'] / maxPageResults))
     # maxPage = 7
 
     queryParams = "&historical=" + request.args.get('historical', 'True') + "&verbose=true"
