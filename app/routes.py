@@ -10,7 +10,7 @@ import json
 #host = "http://localhost:9000"
 #host = "http://addressindex-api-branch.apps.devtest.onsclofo.uk"
 host = "http://addressindex-api-dev.apps.devtest.onsclofo.uk"
-maxPageResults = 1
+maxPageResults = 10
 
 
 
@@ -103,6 +103,8 @@ def addresses():
 def addressResults(address):
 
     form = addressForm()
+    page = int(request.args.get('page', 1))
+
     if form.validate_on_submit():
 
         addressQueryParams = "?classificationfilter=" + form.classificationFilter.data + "&historical=" + form.historical.data + "&verbose=true"
@@ -110,7 +112,7 @@ def addressResults(address):
         return redirect('/addresses/' + form.address.data + addressQueryParams )
 
     classificationfilter = request.args.get('classificationfilter', None)
-    offset = request.args.get('offset', 0)
+    offset = (page * maxPageResults) - maxPageResults
 
     uri = host + "/addresses?input=" + address
     params = {'classificationfilter' : classificationfilter, 'limit' : maxPageResults, 'offset' : offset, 'historical' : request.args.get('historical', 'True'), 'verbose': 'true'}
@@ -118,9 +120,15 @@ def addressResults(address):
 
     addressResults = json.loads(response.text)
 
+    maxPage = int(math.ceil(addressResults['response']['total'] / maxPageResults))
+
+    queryParams = "&historical=" + request.args.get('historical', 'True') + "&verbose=true"
+    if classificationfilter :
+        queryParams = queryParams + "&classificationfilter=" + classificationfilter
+
     classList = getClassList()
 
-    return render_template('addressresults.html', addressResults = addressResults, classList = classList, form = form, searchterm = address)
+    return render_template('addressresults.html', addressResults = addressResults, classList = classList, form = form, page = page, maxPage = maxPage, queryParams = queryParams, searchterm = address)
 
 
 @app.route("/bulk", methods=['GET', 'POST'])

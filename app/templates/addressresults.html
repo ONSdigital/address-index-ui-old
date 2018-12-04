@@ -159,28 +159,57 @@
 
                     {% endfor %}
 
-        <div class="grid__col col-12@m">
-            <div id="pager">
-                <div class="pager-container mars">
+        <div class="grid__col col12 u-ml-m u-mt-l u-mb-xl">
 
-                    {% if ((addressResults.response.limit + addressResults.response.offset) / addressResults.response.limit) > 1 %}
-                    <a href='?offset={{addressResults.response.offset - addressResults.response.limit}}'><span class="pager-option">Previous</span></a>
+            <div>Page = {{ page }}<br>
+            maxPage = {{maxPage}}<br>
+            queryParams = {{queryParams}}</div>
+
+            <nav class="pagination u-mb-l" role="navigation" aria-label="Pagination">
+                <div class="mars pagination__position u-hidden" aria-label="Current page (Page {{page}})">Page {{page}}</div>
+                <ul class="pagination__items">
+                    {% if page > 1 %}
+                    <li class="pagination__item pagination__item--previous"><a href="?page={{(page - 1)}}{{queryParams}}" class="pagination__link" rel="prev" aria-label="Go to the previous page (Page {{page - 1}})">Previous</a></li>
+                    {% endif %}
+                    {% if page > 3 %}
+                    <li class="pagination__item"><a href="?page=1{{queryParams}}" class="pagination__link" aria-label="Go to page 1">1</a></li>
+                    {% endif %}
+                    {% if (maxPage >= 5) and (page > 4) %}
+                    <li class="pagination__item pagination__item--gap">&hellip;</li>
                     {% endif %}
 
-                    {% for page in range(1, (round(addressResults.response.total / addressResults.response.limit)) + 1) %}
-                    {% if page == ((addressResults.response.limit + addressResults.response.offset) / addressResults.response.limit)|int %}
-                    <span class="pager-current pager-option">{{ page }}</span>
-                    {% else %}
-                    <a href='?offset={{ (page * addressResults.response.limit) - addressResults.response.limit }}'><span class="pager-option">{{ page }}</span></a>
+                    {% for pageNumber in range((page-4), (page+5)) %}
+                    {% if pageNumber > 0 and pageNumber < maxPage %}
+                    {% if pageNumber == page %}
+                    <li class="pagination__item pagination__item--active pagination__item--current"><a href="?page={{pageNumber}}{{queryParams}}" class="pagination__link" aria-label="Current page ({{pageNumber}} of {{maxPage}})" aria-current="true">{{pageNumber}}</a></li>
+                    {% elif pageNumber == page-1 %}
+                    <li class="pagination__item"><a href="?page={{pageNumber}}{{queryParams}}" class="pagination__link" rel="prev" aria-label="Go to page {{pageNumber}}">{{pageNumber}}</a></li>
+                    {% elif pageNumber == page+1 %}
+                    <li class="pagination__item"><a href="?page={{pageNumber}}{{queryParams}}" class="pagination__link" rel="next" aria-label="Go to page {{pageNumber}}">{{pageNumber}}</a></li>
+                    {% elif (pageNumber == page+2) or (pageNumber == page-2) or (page < 4 and pageNumber < 6) or (page > maxPage - 3 and pageNumber > maxPage - 5) %}
+                    <li class="pagination__item"><a href="?page={{pageNumber}}{{queryParams}}" class="pagination__link" aria-label="Go to page {{pageNumber}}">{{pageNumber}}</a></li>
+                    {% endif %}
                     {% endif %}
                     {% endfor %}
 
-                    {% if(((addressResults.response.limit + addressResults.response.offset) / addressResults.response.limit) < (addressResults.response.total / addressResults.response.limit)) %}
-                    <a href='?offset={{addressResults.response.offset + addressResults.response.limit}}'><span class="pager-option">Next</span></a>
+                    {% if (maxPage >= 5) and (page < maxPage-3) %}
+                    <li class="pagination__item pagination__item--gap">&hellip;</li>
                     {% endif %}
 
-                </div>
-            </div>
+                    {% if page == maxPage %}
+                    <li class="pagination__item pagination__item--active pagination__item--current"><a href="?page={{maxPage}}{{queryParams}}" class="pagination__link" aria-label="Current page ({{maxPage}} of {{maxPage}})" aria-current="true">{{maxPage}}</a></li>
+                    {% elif page == (maxPage - 1) %}
+                    <li class="pagination__item"><a href="?page={{maxPage}}{{queryParams}}" class="pagination__link" rel="next" aria-label="Go to page {{maxPage}}">{{maxPage}}</a></li>
+                    {% else %}
+                    <li class="pagination__item"><a href="?page={{maxPage}}{{queryParams}}" class="pagination__link" aria-label="Go to page {{maxPage}}">{{maxPage}}</a></li>
+                    {% endif %}
+
+                    {% if page < maxPage %}
+                    <li class="pagination__item pagination__item--next"><a href="?page={{(page + 1)}}{{queryParams}}" class="pagination__link" aria-label="Go to the next page (Page {{page + 1}})" rel="next">Next</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+
         </div>
 
     </div>
