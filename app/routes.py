@@ -10,8 +10,6 @@ import json
 #host = "http://localhost:9000"
 #host = "http://addressindex-api-branch.apps.devtest.onsclofo.uk"
 host = "http://addressindex-api-dev.apps.devtest.onsclofo.uk"
-maxPageResults = 10
-
 
 
 def getClassList():
@@ -48,23 +46,24 @@ def results(postcode):
 
     if form.validate_on_submit():
 
-        postcodeQueryParams = "?classificationfilter=" + form.classificationFilter.data + "&historical=" + form.historical.data + "&verbose=true"
+        postcodeQueryParams = "?classificationfilter=" + form.classificationFilter.data + "&historical=" + form.historical.data + "&verbose=true" + "&resultsperpage=" + form.resultsPerPage.data
 
         return redirect('/postcode/' + form.postcode.data + postcodeQueryParams )
 
     classificationfilter = request.args.get('classificationfilter', None)
+    maxPageResults = int(request.args.get('resultsperpage', '10'))
     offset = (page * maxPageResults) - maxPageResults
 
     uri = host + "/addresses/postcode/" + postcode
-    params = {'classificationfilter' : classificationfilter, 'limit' : maxPageResults, 'offset' : offset, 'historical' : request.args.get('historical', 'True'), 'verbose': 'true'}
+    params = {'classificationfilter' : classificationfilter, 'limit' : maxPageResults, 'offset' : offset, 'historical' : request.args.get('historical', 'True'), 'verbose': 'true', 'resultsperpage' : request.args.get('resultsperpage', '10')}
     response = requests.get(uri, params=params )
 
     postcodeResults = json.loads(response.text)
 
-    maxPage = int(math.ceil(postcodeResults['response']['total'] / maxPageResults))
+    maxPage = int(math.ceil(postcodeResults['response']['total'] / maxPageResults)) + 1
     # maxPage = 7
 
-    queryParams = "&historical=" + request.args.get('historical', 'True') + "&verbose=true"
+    queryParams = "&historical=" + request.args.get('historical', 'True') + "&verbose=true" + '&resultsperpage=' + request.args.get('resultsperpage', '10')
     if classificationfilter :
         queryParams = queryParams + "&classificationfilter=" + classificationfilter
 
@@ -107,22 +106,23 @@ def addressResults(address):
 
     if form.validate_on_submit():
 
-        addressQueryParams = "?classificationfilter=" + form.classificationFilter.data + "&historical=" + form.historical.data + "&verbose=true"
+        addressQueryParams = "?classificationfilter=" + form.classificationFilter.data + "&historical=" + form.historical.data + "&verbose=true" + "&resultsperpage=" + form.resultsPerPage.data
 
         return redirect('/addresses/' + form.address.data + addressQueryParams )
 
     classificationfilter = request.args.get('classificationfilter', None)
+    maxPageResults = int(request.args.get('resultsperpage', '10'))
     offset = (page * maxPageResults) - maxPageResults
 
     uri = host + "/addresses?input=" + address
-    params = {'classificationfilter' : classificationfilter, 'limit' : maxPageResults, 'offset' : offset, 'historical' : request.args.get('historical', 'True'), 'verbose': 'true'}
+    params = {'classificationfilter' : classificationfilter, 'limit' : maxPageResults, 'offset' : offset, 'historical' : request.args.get('historical', 'True'), 'verbose': 'true', 'resultsperpage' : request.args.get('resultsperpage', '10')}
     response = requests.get(uri, params=params )
 
     addressResults = json.loads(response.text)
 
-    maxPage = int(math.ceil(addressResults['response']['total'] / maxPageResults))
+    maxPage = int(math.ceil(addressResults['response']['total'] / maxPageResults)) + 1
 
-    queryParams = "&historical=" + request.args.get('historical', 'True') + "&verbose=true"
+    queryParams = "&historical=" + request.args.get('historical', 'True') + "&verbose=true" + '&resultsperpage=' + request.args.get('resultsperpage', '10')
     if classificationfilter :
         queryParams = queryParams + "&classificationfilter=" + classificationfilter
 

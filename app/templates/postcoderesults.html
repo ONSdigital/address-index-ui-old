@@ -37,6 +37,15 @@
                     </div>
 
                     <div class="grid__col col-6@m">
+                        <div class="field">
+                            <label class="label venus " for="resultsPerPage">
+                                {{ form.resultsPerPage.label }}
+                            </label>
+                            {{ form.resultsPerPage(class_='input input--text', value=postcodeResults.response.resultsPerPage) }}
+                        </div>
+                    </div>
+
+                    <div class="grid__col col-6@m">
 
                         <div class="field field--radio field--multiplechoice">
                             <fieldset>
