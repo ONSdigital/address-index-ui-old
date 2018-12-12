@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}UPRN Match{% endblock %}
+
+{% block content %}
+
+<div class="page__container container">
+    <div class="grid grid--spaced">
+        <div class="grid__col col-12@m">
+            <h1 class="jupiter">Search for an address by uprn</h1>
+        </div>
+
+        <div class="grid__col col-12@m">
+            <div class="panel panel--simple panel--info">
+                <div class="panel__body">
+                    <p>To get started, enter a UPRN.</p>
+                </div>
+            </div>
+        </div>
+
+
+                <form action="" method="post" novalidate>
+
+                        {{ form.hidden_tag() }}
+                        <fieldset class="searchfield venus">
+                            <div class="grid__col col-12@m">
+                                <div class="field">
+                                    <label class="label venus " for="uprn">
+                                        Enter UPRN
+                                    </label>
+                                    {{ form.uprn(class_='input input--text') }}
+                                </div>
+                            </div>
+
+                            <div class="grid__col col-12@m">
+                                {{ form.submit(class_='btn') }}
+                            </div>
+
+                        </fieldset>
+
+
+                </form>
+
+
+    </div>
+</div>
+
+{% endblock %}
+

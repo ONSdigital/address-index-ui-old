@@ -1,20 +1,71 @@
 from flask import render_template, redirect, request, flash
 from app import app
-from app.forms import postcodeForm, addressForm
+from app.forms import PostcodeForm, AddressForm, UPRNForm
 import math
 
 import requests
 
 import json
+import re
 
-#host = "http://localhost:9000"
-#host = "http://addressindex-api-branch.apps.devtest.onsclofo.uk"
 host = "http://addressindex-api-dev.apps.devtest.onsclofo.uk"
 
 
-def getClassList():
+def get_class_list():
     classifications = requests.get(host + "/classifications")
     return json.loads(classifications.text)
+
+
+def get_class_subset(code=None):
+
+    class_call = requests.get(host + "/classifications")
+    class_list = json.loads(class_call.text)
+
+    subset_list = []
+
+    if code:
+
+        if len(code) == 1:
+            for classification in class_list['classifications']:
+                if re.match(r'^(%s)[A-Z]$' % code, classification['code']):
+                    subset_list.append({"code": classification['code'].encode("utf-8"),
+                                        "label": classification['label'].encode("utf-8")})
+        elif len(code) == 2:
+            for classification in class_list['classifications']:
+                if re.match(r'^(%s)[0-9]{2}$' % code, classification['code']):
+                    subset_list.append({"code": classification['code'].encode("utf-8"),
+                                        "label": classification['label'].encode("utf-8")})
+        elif len(code) == 4:
+            for classification in class_list['classifications']:
+                if re.match(r'^(%s)[A-Z]{2}$' % code, classification['code']):
+                    subset_list.append({"code": classification['code'].encode("utf-8"),
+                                        "label": classification['label'].encode("utf-8")})
+    else:
+        for classification in class_list['classifications']:
+            if re.match(r'^[A-Z]$', classification['code']):
+                subset_list.append({"code": classification['code'].encode("utf-8"),
+                                    "label": classification['label'].encode("utf-8")})
+
+    return subset_list
+
+
+def get_child_count(code):
+
+    count = len(get_class_subset(code))
+
+    return count
+
+
+def get_classification_list(code=None):
+
+    class_list = []
+
+    for classification in get_class_subset(code):
+        class_list.append({"code": classification['code'], "label": classification['label'],
+                           "child_count": get_child_count(classification['code'])})
+
+    return class_list
+
 
 @app.context_processor
 def utility_processor():
@@ -24,52 +75,68 @@ def utility_processor():
 @app.route('/', methods=['GET', 'POST'])
 @app.route("/postcode", methods=['GET', 'POST'])
 def postcode():
-    form = postcodeForm()
+    form = PostcodeForm()
 
     if request.method == 'POST':
-        if form.validate_on_submit() == False:
+        if not form.validate_on_submit():
             flash('All fields are required.')
-            return render_template('postcode.html', form = form)
+            return render_template('postcode.html', form=form)
         else:
             return redirect('/postcode/' + form.postcode.data )
     elif request.method == 'GET':
-        return render_template('postcode.html', form = form)
-
-
+        return render_template('postcode.html', form=form)
 
 
 @app.route('/postcode/<postcode>', methods=['GET', 'POST'])
 def results(postcode):
 
-    form = postcodeForm()
+    form = PostcodeForm()
     page = int(request.args.get('page', 1))
 
     if form.validate_on_submit():
 
-        postcodeQueryParams = "?classificationfilter=" + form.classificationFilter.data + "&historical=" + form.historical.data + "&verbose=true" + "&resultsperpage=" + form.resultsPerPage.data
+        postcode_query_params = "?classificationfilter=" + form.classificationFilter.data + \
+                                "&historical=" + form.historical.data + "&verbose=true" + \
+                                "&resultsperpage=" + form.resultsPerPage.data
 
-        return redirect('/postcode/' + form.postcode.data + postcodeQueryParams )
+        return redirect('/postcode/' + form.postcode.data + postcode_query_params )
 
     classificationfilter = request.args.get('classificationfilter', None)
-    maxPageResults = int(request.args.get('resultsperpage', '10'))
-    offset = (page * maxPageResults) - maxPageResults
+    max_page_results = int(request.args.get('resultsperpage', '10'))
+    offset = (page * max_page_results) - max_page_results
 
     uri = host + "/addresses/postcode/" + postcode
-    params = {'classificationfilter' : classificationfilter, 'limit' : maxPageResults, 'offset' : offset, 'historical' : request.args.get('historical', 'True'), 'verbose': 'true', 'resultsperpage' : request.args.get('resultsperpage', '10')}
+    params = {'classificationfilter': classificationfilter, 'limit': max_page_results, 'offset': offset,
+              'historical': request.args.get('historical', 'True'), 'verbose': 'true',
+              'resultsperpage': request.args.get('resultsperpage', '10')}
     response = requests.get(uri, params=params )
 
-    postcodeResults = json.loads(response.text)
+    postcode_results = json.loads(response.text)
 
-    maxPage = int(math.ceil(postcodeResults['response']['total'] / maxPageResults)) + 1
-    # maxPage = 7
+    max_page = int(math.ceil(postcode_results['response']['total'] / max_page_results)) + 1
 
-    queryParams = "&historical=" + request.args.get('historical', 'True') + "&verbose=true" + '&resultsperpage=' + request.args.get('resultsperpage', '10')
-    if classificationfilter :
-        queryParams = queryParams + "&classificationfilter=" + classificationfilter
+    query_params = "&historical=" + request.args.get('historical', 'True') + "&verbose=true" + \
+                   '&resultsperpage=' + request.args.get('resultsperpage', '10')
+    if classificationfilter:
+        query_params = query_params + "&classificationfilter=" + classificationfilter
 
-    classList = getClassList()
+    class_list = get_class_list()
 
-    return render_template('postcoderesults.html', postcodeResults = postcodeResults, classList = classList, form = form, page = page, maxPage = maxPage, queryParams = queryParams)
+    return render_template('postcoderesults.html', postcodeResults=postcode_results, classList=class_list, form=form, page=page, maxPage=max_page, queryParams=query_params)
+
+
+@app.route("/uprn", methods=['GET', 'POST'])
+def uprn():
+    form = UPRNForm()
+
+    if request.method == 'POST':
+        if not form.validate_on_submit():
+            flash('All fields are required.')
+            return render_template('uprn.html', form=form)
+        else:
+            return redirect('/result/' + form.uprn.data )
+    elif request.method == 'GET':
+        return render_template('uprn.html', form=form)
 
 
 @app.route('/result/<uprn>')
@@ -79,61 +146,67 @@ def result(uprn):
     params = {'verbose': 'true'}
     response = requests.get(uri, params=params)
 
-    uprnResult = json.loads(response.text)
+    uprn_result = json.loads(response.text)
 
-    classList = getClassList()
+    class_list = get_class_list()
 
-    return render_template('result.html', uprnResult = uprnResult, classList = classList)
+    return render_template('result.html', uprnResult=uprn_result, classList=class_list)
 
 
 @app.route('/help')
 def help():
     return render_template('help.html')
 
+
+@app.route('/filters/<start_point>')
+def filters(start_point=None, existing_filters=None):
+
+    class_list = get_classification_list(start_point)
+
+    return render_template('filters.html', class_list=class_list, existing_filters=existing_filters)
+
+
 @app.route("/addresses", methods=['GET', 'POST'])
 def addresses():
-    form = addressForm()
+    form = AddressForm()
     if form.validate_on_submit():
         return redirect('/addresses/' + form.address.data )
-    return render_template("addresses.html", form = form)
+    return render_template("addresses.html", form=form)
 
 
 @app.route('/addresses/<address>', methods=['GET', 'POST'])
 def addressResults(address):
 
-    form = addressForm()
+    form = AddressForm()
     page = int(request.args.get('page', 1))
 
     if form.validate_on_submit():
 
-        addressQueryParams = "?classificationfilter=" + form.classificationFilter.data + "&historical=" + form.historical.data + "&verbose=true" + "&resultsperpage=" + form.resultsPerPage.data
+        address_query_params = "?classificationfilter=" + form.classificationFilter.data + \
+                             "&historical=" + form.historical.data + "&verbose=true" + \
+                             "&resultsperpage=" + form.resultsPerPage.data
 
-        return redirect('/addresses/' + form.address.data + addressQueryParams )
+        return redirect('/addresses/' + form.address.data + address_query_params)
 
     classificationfilter = request.args.get('classificationfilter', None)
-    maxPageResults = int(request.args.get('resultsperpage', '10'))
-    offset = (page * maxPageResults) - maxPageResults
+    max_page_results = int(request.args.get('resultsperpage', '10'))
+    offset = (page * max_page_results) - max_page_results
 
     uri = host + "/addresses?input=" + address
-    params = {'classificationfilter' : classificationfilter, 'limit' : maxPageResults, 'offset' : offset, 'historical' : request.args.get('historical', 'True'), 'verbose': 'true', 'resultsperpage' : request.args.get('resultsperpage', '10')}
-    response = requests.get(uri, params=params )
+    params = {'classificationfilter': classificationfilter, 'limit': max_page_results, 'offset': offset,
+              'historical': request.args.get('historical', 'True'), 'verbose': 'true',
+              'resultsperpage': request.args.get('resultsperpage', '10')}
+    response = requests.get(uri, params=params)
 
-    addressResults = json.loads(response.text)
+    address_results = json.loads(response.text)
 
-    maxPage = int(math.ceil(addressResults['response']['total'] / maxPageResults)) + 1
+    max_page = int(math.ceil(addressResults['response']['total'] / max_page_results)) + 1
 
-    queryParams = "&historical=" + request.args.get('historical', 'True') + "&verbose=true" + '&resultsperpage=' + request.args.get('resultsperpage', '10')
-    if classificationfilter :
-        queryParams = queryParams + "&classificationfilter=" + classificationfilter
+    query_params = "&historical=" + request.args.get('historical', 'True') + "&verbose=true" + '&resultsperpage=' + request.args.get('resultsperpage', '10')
+    if classificationfilter:
+        query_params = query_params + "&classificationfilter=" + classificationfilter
 
-    classList = getClassList()
+    class_list = get_class_list()
 
-    return render_template('addressresults.html', addressResults = addressResults, classList = classList, form = form, page = page, maxPage = maxPage, queryParams = queryParams, searchterm = address)
-
-
-@app.route("/bulk", methods=['GET', 'POST'])
-def bulk():
-    form = postcodeForm()
-    if form.validate_on_submit():
-        return redirect('/bulk/' + form.postcode.data )
-    return render_template("postcode.html", form = form)
+    return render_template('addressresults.html', addressResults=address_results, classList=class_list, form=form,
+                           page=page, maxPage=max_page, queryParams=query_params, searchterm=address)

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Filter options{% endblock %}
+
+{% block content %}
+
+<div class="page__container container">
+    <div class="grid grid--spaced">
+        <div class="grid__col col-12@m">
+            <h1 class="jupiter">Filter options</h1>
+        </div>
+
+        <div class="grid__col col-12@m">
+            <div class="panel panel--simple panel--info">
+                <div class="panel__body">
+                    <p>Filter your search results by property classification</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid__col col-12@m">
+            <h2 class="saturn">Browse classification</h2>
+        </div>
+
+        <div class="grid__col col-8@m">
+
+            <div class="field field--checkbox field--multiplechoice">
+                <fieldset>
+                    <legend class="field__legend u-fs-r">Select all that apply</legend>
+                    {% for classification in class_list %}
+                    <div class="field__item">
+                        <input class="input input--checkbox" name="checkbox-answer" value="{{classification['code']}}" id="{{classification['code']}}" type="checkbox">
+                        <label class="label label--inline u-fs-r " for="{{classification['code']}}">{{classification['label']}}</label>
+                        {% if classification['child_count'] > 0: %}
+                            <div><a href="{{ url_for('filters', start_point=classification['code']) }}">{{ classification['child_count'] }} more options</a></div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </fieldset>
+            </div>
+
+        </div>
+
+        <div class="grid__col col-4@m">
+            {% if existing_filters %}
+                <p>Filters added</p>
+            {% else %}
+                <p>0 filters added</p>
+            {% endif %}
+        </div>
+
+
+
+    </div>
+</div>
+
+{% endblock %}
+
