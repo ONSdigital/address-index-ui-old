@@ -28,3 +28,8 @@ class AddressForm(FlaskForm):
                             choices=[('true', 'Yes'), ('false', 'No')], default='true')
     resultsPerPage = StringField('Results per page', default='10')
     submit = SubmitField('Search')
+
+
+class FilterForm(FlaskForm):
+    classificationFilter = StringField('Classification Filter')
+    submit = SubmitField('Search')

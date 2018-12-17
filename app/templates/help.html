@@ -16,49 +16,30 @@
                             <a href="#introduction">Introduction</a>
                         </li>
                         <li>
-                            <a href="#login">Login</a>
+                            <a href="#search_single">Search for an Address</a>
                         </li>
                         <li>
-                            <a href="#search_single">Search for a Single Address</a>
+                            <a href="#search_postcode">Search for a Postcode</a>
                         </li>
                         <li>
-                            <a href="#search_postcode">Search for an address by postcode</a>
-                        </li>
-                        <li>
-                            <a href="#search_multiple">Search for Multiple Addresses</a>
-                        </li>
-                        <li>
-                            <a href="#clerical">Perform an advanced search using the Clerical Tool</a>
-                        </li>
-                        <li>
-                            <a href="#debug">Debug the ElasticSearch Query</a>
+                            <a href="#search_multiple">Search for a UPRN</a>
                         </li>
                         <li>
                             <a href="#notes">Technical Notes</a>
                         </li>
                     </ul>
                 </div>
+
                 <div>
                     <h2 id="introduction" class="saturn">Introduction</h2>
                     <p>The Address Index User Interface (UI) provides an address searching and matching service to users on the ONS network. To log in to the service, enter the same username and password used to log into your PC/Laptop.</p>
-                    <p>If you are on the ONS network and are unable to access the service, please email <a href="mailto:ai.users@@ons.gov.uk">Address Index</a></p>
+                    <p>If you are on the ONS network and are unable to access the service, please email <a href="mailto:ai.users@ons.gov.uk">Address Index</a></p>
                     <p>To provide access to users outside the ONS network, mainly Other Government Departments, the Address Index service will be accessible through the use of an Application Program Interface (API).</p>
                     <p>During the Private Beta external users are supplying bulk input files via MoveIt.</p>
                 </div>
 
                 <div>
-                    <h2 id="login" class="saturn">Login</h2>
-                    <ol>
-                        <li>Open a web browser and go to <a href="http://addressindex-ui.apps.cfnpt.ons.statistics.gov.uk/">http://addressindex-ui.apps.cfnpt.ons.statistics.gov.uk/</a></li>
-
-                        <li>If login is required, enter your ons network username and password, and click “Login” button</li>
-                    </ol>
-
-                    <img src='@routes.Assets.versioned("images/help/login_1.jpg").toString' alt="Login">
-                </div>
-
-                <div>
-                    <h2 id="search_single" class="saturn">Search for a Single Address</h2>
+                    <h2 id="search_single" class="saturn">Search for an Address</h2>
 
                     <div>1. From the Address Index home page, click Find an address.</div>
                     <img src='@routes.Assets.versioned("images/help/single_1.jpg").toString' alt="Homepage, 'Find an address' highlighted">
@@ -92,7 +73,7 @@
                 </div>
 
                 <div>
-                    <h2 id="search_postcode" class="saturn">Search for an address by postcode</h2>
+                    <h2 id="search_postcode" class="saturn">Search for a Postcode</h2>
 
                     <div>1. From the Address Index home page, click Find an address by postcode.</div>
                     <img src='@routes.Assets.versioned("images/help/postcode-home.jpg").toString' alt="Find an address by postcode">
@@ -119,7 +100,7 @@
                 </div>
 
                 <div>
-                    <h2 id="search_multiple" class="saturn">Search for  Multiple Addresses</h2>
+                    <h2 id="search_multiple" class="saturn">Search for a UPRN</h2>
 
                     <div>1. From the Address Index home page, click Match multiple addresses</div>
                     <img src='@routes.Assets.versioned("images/help/multiple_1.jpg").toString' alt="Search for Multiple Addresses">
@@ -162,35 +143,8 @@
                 </div>
 
                 <div>
-                    <h2 id="clerical" class="saturn">Perform an advanced search using the Clerical Tool</h2>
-
-                    <div>1. From the Address Index home page, click Clerical tool. This function is intended for expert users and provides the ability to query details of specific fields included in AddressBase.</div>
-                    <img src='@routes.Assets.versioned("images/help/clerical_1.jpg").toString' alt="Clerical tool select">
-
-                    <div>2. Search an address as you would in <a href="#search_single">Single Search</a>. The result is identical to the one in Single search, the user may click on "Additional Clerical Information" to see more information about individual fields and hierarchies.</div>
-
-                    <img src='@routes.Assets.versioned("images/help/clerical_2.jpg").toString' alt="Clerical tool results">
-
-                    <div>3. Click on "Hide" to hide the additional information</div>
-                </div>
-
-                <div>
-                    <h2 id="debug" class="saturn">Debug the Elastic Search Query</h2>
-
-                    <div>This tool is for expert users and reports the underlying elastic search query</div>
-                    <div>1. From the Address Index home page, click Display ES Query</div>
-
-                    <img src='@routes.Assets.versioned("images/help/debug_1.jpg").toString' alt="Debug select">
-
-                    <div>2. Search an address as you would in <a href="#search_single">Single Search</a>. The result is identical to the Clerical tool, except there is a large text box above the results containing the elastic search query that the API has generated and used. This query can be copied into a tool such as Kopf or Postman for testing.</div>
-
-                    <img src='@routes.Assets.versioned("images/help/debug_3.jpg").toString' alt="Debug results">
-                </div>
-
-                <div>
                     <h2 id="notes" class="saturn">Technical Notes</h2>
                     <ol>
-                        <li><strong>Viewing Site In Welsh</strong> - In Chrome go to Settings, Advanced settings, Languages, if Welsh is not on the list, add it with the Add button. Drag Welsh to the top and click Finish. The UI is now in Welsh mode. Drag Welsh below English to toggle back.</li>
                         <li><strong>Validation and Address Format</strong> - The only validation done on the input string is to check that a non-empty string is supplied. No checks are made as to what address parts are included. Whatever is supplied is processed by the API.  The exception to this is if the input is only a number, it is assumed to be a UPRN and matched accordingly.</li>
                         <li><strong>Bookmarking</strong> - The address string (URL encoded) and other parameters are echoed to the URL bar so you can bookmark a single search or clerical tool result and send it to someone else. It will recreate the page as saved such as expanding the chosen address in the clerical tool. Note that the PAF / LA toggle is done on the client so is not bookmarkable.</li>
                         <li><strong>Paging</strong> - The maximum number of pages is 100 or the number of results / number of results per page. In the UI the number of results per page is set to 10 and cannot be overridden in the URL. Note that as well as next / previous buttons you can jump to a page number using the page= query string parameter in the URL.</li>

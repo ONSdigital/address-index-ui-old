@@ -4,6 +4,9 @@
 
 {% block content %}
 
+Existing filters {{existing_filters}}<br>
+Called from {{called_from}}
+
 <div class="page__container container">
     <div class="grid grid--spaced">
         <div class="grid__col col-12@m">
@@ -23,21 +26,30 @@
         </div>
 
         <div class="grid__col col-8@m">
+            <form action="" method="post" novalidate>
 
-            <div class="field field--checkbox field--multiplechoice">
-                <fieldset>
-                    <legend class="field__legend u-fs-r">Select all that apply</legend>
-                    {% for classification in class_list %}
-                    <div class="field__item">
-                        <input class="input input--checkbox" name="checkbox-answer" value="{{classification['code']}}" id="{{classification['code']}}" type="checkbox">
-                        <label class="label label--inline u-fs-r " for="{{classification['code']}}">{{classification['label']}}</label>
-                        {% if classification['child_count'] > 0: %}
-                            <div><a href="{{ url_for('filters', start_point=classification['code']) }}">{{ classification['child_count'] }} more options</a></div>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                </fieldset>
-            </div>
+                {{ form.hidden_tag() }}
+
+                <div class="field field--checkbox field--multiplechoice">
+                    <fieldset>
+                        <legend class="field__legend u-fs-r">Select all that apply</legend>
+                        {% for classification in class_list %}
+                        <div class="field__item">
+                            <input class="input input--checkbox" name="classificationFilter" value="{{classification['code']}}" id="{{classification['code']}}" type="checkbox">
+                            <label class="label label--inline u-fs-r " for="{{classification['code']}}">{{classification['label']}}</label>
+                            {% if classification['child_count'] > 0: %}
+                                <div><a href="{{ url_for('filters', start_point=classification['code']) }}">{{ classification['child_count'] }} more options</a></div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </fieldset>
+                </div>
+
+                <div>
+                    {{ form.submit(class_='btn') }}
+                </div>
+
+            </form>
 
         </div>
 
