@@ -1,7 +1,7 @@
 pipeline {
 
     environment {
-        SVC_NAME = "address-index-ui"
+        SVC_NAME = "address-index-ui-flask"
         ORG = "ai"
     }
 
