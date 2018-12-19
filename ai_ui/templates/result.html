@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Address Result{% endblock %}
+
+{% block content %}
+
+{% if uprnResult == "" %}
+
+    <div class="page__container container">
+        <div class="wrapper">
+            <div class="group">
+                <div class="col-12">
+                    <h1 class="jupiter">Invalid UPRN</h1>
+                    <p>The requested UPRN '{{uprn}}' was not found. Please <a class="result-short-form-link" href="{{ url_for('uprn') }}">try an alternative UPRN</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% else %}
+
+    <div class="page__container container">
+        <div class="grid grid--spaced">
+            <div class="grid__col col-12@m">
+                <h1 class="jupiter">{{ uprnResult.response.address.formattedAddressNag }}</h1>
+            </div>
+            <div class="grid__col col-3@m">
+                <div class="badge badge--amber">Approved</div>
+            </div>
+            <div class="grid__col col-3@m">
+                <div class="mars">UPRN &nbsp;<span class="venus">{{ uprnResult.response.address.uprn }}</span></div>
+            </div>
+            <div class="grid__col col-3@m">
+                <div><a href="https://maps.google.com/?q={{ uprnResult.response.address.geo.latitude }},{{ uprnResult.response.address.geo.longitude }}&ll={{ uprnResult.response.address.geo.latitude }},{{ uprnResult.response.address.geo.longitude }}&z=20&t=h" target="_blank">Location map</a></div>
+            </div>
+            <div class="grid__col col-12@m">
+                <div class="venus"><a href='/radius/search/Add%20search%20term?rangekm=5&amp;lat=50.705948&amp;lon=-3.5091076&amp;historical=true&amp;matchthreshold=5'>Radius search from this location</a></div>
+            </div>
+        </div>
+
+
+
+        <div class="wrapper">
+            <div class="group">
+                <div class="col-12">
+
+                    <div class="result-content">
+                        <div class="alert alert-success">
+
+
+
+                            <section class="infobox-standard">
+                                <table class="address-result-table mars">
+                                    <tr>
+                                        <td>Local Authority address</td>
+                                        <td class="venus">{{ uprnResult.response.address.formattedAddressNag }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Postal Address File</td>
+                                        <td class="venus">{{ uprnResult.response.address.formattedAddressPaf }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Welsh Language (NAG)</td>
+                                        <td class="venus">{{ uprnResult.response.address.welshFormattedAddressNag }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Welsh Language (PAF)</td>
+                                        <td class="venus">{{ uprnResult.response.address.welshFormattedAddressPaf }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Classification</td>
+                                        <td class="venus">
+
+                                            {% for classification in classList.classifications %}
+                                            {% if classification.code == uprnResult.response.address.classificationCode %}
+                                            {{ classification.label }}
+                                            {% endif %}
+                                            {% endfor %}
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Local Authority</td>
+                                        <td class="venus">{% filter capitalize %}{{ uprnResult.response.address.nag.0.localCustodianName }}{% endfilter %}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Local Authority code</td>
+                                        <td class="venus">{{ uprnResult.response.address.nag.0.localCustodianGeogCode }}</td>
+                                    </tr>
+                                </table>
+                            </section>
+
+
+
+                            {% if uprnResult.response.address.relatives %}
+
+                                <section class="address-result-hierarchy">
+                                    <h2 class="saturn">Address hierarchy</h2>
+
+                                    {% for level in uprnResult.response.address.relatives %}
+
+                                        <article class="address-result-hierarchy-single">
+
+                                            {% if (level.level == 1) %}
+                                            <h3 class="neptune">Primary property</h3>
+                                            {% elif (level.level == 2) %}
+                                            <h3 class="neptune">Secondary properties ({{ level.siblings |count }})</h3>
+                                            {% elif (level.level == 3) %}
+                                            <h3 class="neptune">Tertiary properties</h3>
+                                            {% elif (level.level == 4) %}
+                                            <h3 class="neptune">Quaternary properties</h3>
+                                            {% elif (level.level == 5) %}
+                                            <h3 class="neptune">Quinary properties</h3>
+                                            {% endif %}
+
+                                            <table class="table">
+                                                <thead class="table--head">
+                                                <th scope="col" class="table--header--cell">UPRN</th>
+                                                <th scope="col" class="table--header--cell">Address</th>
+                                                </thead>
+                                                <tbody>
+                                                {% for sibling in level.siblings %}
+                                                    <tr class="table--row">
+                                                        <td class="table--cell"><a href="{{ url_for('result', uprn = sibling) }}">{{ sibling }}</a></td>
+                                                        <td class="table--cell">Address</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+
+                                        </article>
+
+                                    {% endfor %}
+
+                                </section>
+
+                            {% endif %}
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endif %}
+
+{% endblock %}
+

@@ -4,9 +4,6 @@
 
 {% block content %}
 
-{{ postcodeResults }}
-
-
 <div class="page__container container">
     <div class="grid grid--spaced">
         <div class="grid__col col-12@m">
@@ -158,6 +155,7 @@
 
                     {% endfor %}
 
+        {% if postcodeResults.response.total > 0 %}
 
             <div class="grid__col col12 u-ml-m u-mt-l u-mb-xl">
 
@@ -207,6 +205,8 @@
                 </nav>
 
             </div>
+
+        {% endif %}
 
     </div>
 </div>

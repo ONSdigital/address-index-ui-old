@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Postcode Match{% endblock %}
+
+{% block content %}
+
+<div class="page__container container">
+    <div class="grid grid--spaced">
+        <div class="grid__col col-12@m">
+            <h1 class="jupiter">Search for an address by postcode</h1>
+        </div>
+
+        <div class="grid__col col-12@m">
+            <div class="panel panel--simple panel--info">
+                <div class="panel__body">
+                    <p>To get started, enter an exact postcode.</p>
+                </div>
+            </div>
+        </div>
+
+
+                <form action="" method="post" novalidate>
+
+                        {{ form.hidden_tag() }}
+                        <fieldset class="searchfield venus">
+                            <div class="grid__col col-12@m">
+                                <div class="field">
+                                    <label class="label venus " for="postcode">
+                                        Enter postcode
+                                    </label>
+                                    {{ form.postcode(class_='input input--text', placeholder='For example, EX2 6GA') }}
+                                </div>
+                            </div>
+
+                            <div class="grid__col col-12@m">
+                                {{ form.submit(class_='btn') }}
+                            </div>
+
+                        </fieldset>
+
+
+                </form>
+
+
+    </div>
+</div>
+
+{% endblock %}
+
