@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Address Index Login{% endblock %}
+
+{% block content %}
+
+<div class="page__container container">
+    <div class="grid grid--spaced">
+        <div class="grid__col col-12@m">
+            <h1 class="jupiter">Login</h1>
+        </div>
+
+        <div class="grid__col col-12@m">
+            <div class="panel panel--simple panel--info">
+                <div class="panel__body">
+                    <p>You must login to use this service.</p>
+                </div>
+            </div>
+        </div>
+
+
+
+        <form id="form-sign-in" action="http://localhost:5000/Login" class="form" method="POST">
+
+            <h3 id="loginTitle" class="saturn">Sign in</h3>
+
+            <div class="field u-mb-s">
+
+                <label class="label">Username</label>
+
+                <input id="usernameInput" autofocus class="input input--text input-type__input" name="username" required type="text">
+
+            </div>
+
+            <div class="field">
+
+                <label class="label " for="passwordInput" id="inputPasswordLabel">Password</label>
+
+                <div class="field--toggle">
+
+                    <label class="label label--inline venus field__label" for="showPasswordToggle">Show password</label>
+
+                    <input id="showPasswordToggle" class="field__input input input--checkbox" type="checkbox" />
+
+                </div>
+
+                <input id="passwordInput" required type="password" name="password" class="input input--text" aria-describedby="inputPasswordLabel" />
+
+            </div>
+
+            <p class="forgot-password"><a href="forgot-password.html">Forgot password?</a></p>
+
+            <button id="loginButton" class="btn btn--primary venus" type="submit">Sign in</button>
+
+            {% with messages = get_flashed_messages() %}
+
+                {% if messages %}
+
+                    {% for error in messages %}
+
+                        <div class="col-8">
+
+                            <div class="panel panel--simple panel--error u-mb-l">
+
+                                <p class="mars">{{ error }}</p>
+
+                                <div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            {% endwith %}
+
+        </form>
+
+
+    </div>
+</div>
+
+{% endblock %}
+
