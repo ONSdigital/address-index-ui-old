@@ -1,6 +1,6 @@
 from flask import render_template, redirect, request, flash
-from app import app
-from app.forms import PostcodeForm, AddressForm, UPRNForm, FilterForm
+from ai_ui import app
+from ai_ui.forms import PostcodeForm, AddressForm, UPRNForm, FilterForm
 import math
 
 import requests
