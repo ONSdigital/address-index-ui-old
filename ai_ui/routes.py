@@ -1,6 +1,7 @@
 from flask import render_template, redirect, request, flash
 from ai_ui import app
 from ai_ui.forms import PostcodeForm, AddressForm, UPRNForm, FilterForm
+from config import api_url
 import math
 
 import requests
@@ -8,17 +9,15 @@ import requests
 import json
 import re
 
-host = "http://addressindex-api-dev.apps.devtest.onsclofo.uk"
-
 
 def get_class_list():
-    classifications = requests.get(host + "/classifications")
+    classifications = requests.get(api_url + "/classifications")
     return json.loads(classifications.text)
 
 
 def get_class_subset(code=None):
 
-    class_call = requests.get(host + "/classifications")
+    class_call = requests.get(api_url + "/classifications")
     class_list = json.loads(class_call.text)
 
     subset_list = []
@@ -82,7 +81,7 @@ def address_search():
             flash('All fields are required.')
             return render_template('addresses.html', form=form)
         else:
-            return redirect('/addresses/' + form.postcode.data)
+            return redirect('/addresses/' + form.address.data)
     elif request.method == 'GET':
         return render_template('addresses.html', form=form)
 
@@ -119,7 +118,7 @@ def postcode_results(postcode):
     max_page_results = int(request.args.get('resultsperpage', '10'))
     offset = (page * max_page_results) - max_page_results
 
-    uri = host + "/addresses/postcode/" + postcode
+    uri = api_url + "/addresses/postcode/" + postcode
     params = {'classificationfilter': classificationfilter, 'limit': max_page_results, 'offset': offset,
               'historical': request.args.get('historical', 'True'), 'verbose': 'true',
               'resultsperpage': request.args.get('resultsperpage', '10')}
@@ -160,7 +159,7 @@ def uprn_search():
 @app.route('/result/<uprn>')
 def result(uprn):
 
-    uri = host + "/addresses/uprn/" + uprn
+    uri = api_url + "/addresses/uprn/" + uprn
     params = {'verbose': 'true'}
     response = requests.get(uri, params=params)
 
@@ -211,7 +210,7 @@ def address_results(address):
     max_page_results = int(request.args.get('resultsperpage', '10'))
     offset = (page * max_page_results) - max_page_results
 
-    uri = host + "/addresses?input=" + address
+    uri = api_url + "/addresses?input=" + address
     params = {'classificationfilter': classificationfilter, 'limit': max_page_results, 'offset': offset,
               'historical': request.args.get('historical', 'True'), 'verbose': 'true',
               'resultsperpage': request.args.get('resultsperpage', '10')}
