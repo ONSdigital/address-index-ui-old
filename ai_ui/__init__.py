@@ -1,10 +1,6 @@
-from flask import Flask, Blueprint
-from config import Config
+from ai_ui.create_app import create_application
 
-
-app = Flask(__name__)
-
-app.config.from_object(Config)
+app = create_application()
 
 import ai_ui.routes
 from ai_ui import routes

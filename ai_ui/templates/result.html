@@ -118,7 +118,7 @@
                                                 <tbody>
                                                 {% for sibling in level.siblings %}
                                                     <tr class="table--row">
-                                                        <td class="table--cell"><a href="{{ url_for('result', uprn = sibling) }}">{{ sibling }}</a></td>
+                                                        <td class="table--cell"><a href="{{ url_for('search_bp.result', uprn = sibling) }}">{{ sibling }}</a></td>
                                                         <td class="table--cell">Address</td>
                                                     </tr>
                                                 {% endfor %}

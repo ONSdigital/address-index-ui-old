@@ -12,7 +12,7 @@ authentication_bp = Blueprint('authentication_bp', __name__, static_folder='stat
 @authentication_bp.route('/', methods=['GET'])
 def home():
     if current_user.is_authenticated:
-        return redirect(url_for('search_bp.search'))
+        return redirect(url_for('search_bp.address_search'))
     return redirect(url_for('authentication_bp.login'))
 
 
@@ -20,7 +20,7 @@ def home():
 def login():
     if request.method == 'GET':
         if current_user.is_authenticated:
-            return redirect(url_for('search_bp.search'))
+            return redirect(url_for('search_bp.address_search'))
         return render_template('login.html', error=None)
 
     username = request.form['username']
@@ -33,14 +33,14 @@ def login():
         user = User(user_id, token, role)
         login_user(user)
         users.append(user)
-        return redirect(url_for('search_bp.search'))
+        return redirect(url_for('search_bp.address_search'))
     else:
         if username == 'admin' and password == 'admin':
             user_id = str(uuid.uuid4())
             user = User(user_id, str(uuid.uuid4()), 'admin')
             login_user(user)
             users.append(user)
-            return redirect(url_for('search_bp.search'))
+            return redirect(url_for('search_bp.address_search'))
         else:
             flash('Invalid Credentials. Please try again.')
             return render_template('login.html')

@@ -18,68 +18,69 @@
             </div>
         </div>
 
+        <div class="grid__col col-12@m">
 
+            <form id="form-sign-in" action="http://localhost:5000/login" class="form" method="POST">
 
-        <form id="form-sign-in" action="http://localhost:5000/Login" class="form" method="POST">
+                <h3 id="loginTitle" class="saturn">Sign in</h3>
 
-            <h3 id="loginTitle" class="saturn">Sign in</h3>
+                <div class="field u-mb-s">
 
-            <div class="field u-mb-s">
+                    <label class="label">Username</label>
 
-                <label class="label">Username</label>
-
-                <input id="usernameInput" autofocus class="input input--text input-type__input" name="username" required type="text">
-
-            </div>
-
-            <div class="field">
-
-                <label class="label " for="passwordInput" id="inputPasswordLabel">Password</label>
-
-                <div class="field--toggle">
-
-                    <label class="label label--inline venus field__label" for="showPasswordToggle">Show password</label>
-
-                    <input id="showPasswordToggle" class="field__input input input--checkbox" type="checkbox" />
+                    <input id="usernameInput" autofocus class="input input--text input-type__input" name="username" required type="text">
 
                 </div>
 
-                <input id="passwordInput" required type="password" name="password" class="input input--text" aria-describedby="inputPasswordLabel" />
+                <div class="field">
 
-            </div>
+                    <label class="label " for="passwordInput" id="inputPasswordLabel">Password</label>
 
-            <p class="forgot-password"><a href="forgot-password.html">Forgot password?</a></p>
+                    <div class="field--toggle">
 
-            <button id="loginButton" class="btn btn--primary venus" type="submit">Sign in</button>
+                        <label class="label label--inline venus field__label" for="showPasswordToggle">Show password</label>
 
-            {% with messages = get_flashed_messages() %}
+                        <input id="showPasswordToggle" class="field__input input input--checkbox" type="checkbox" />
+
+                    </div>
+
+                    <input id="passwordInput" required type="password" name="password" class="input input--text" aria-describedby="inputPasswordLabel" />
+
+                </div>
+
+                <p class="forgot-password"><a href="forgot-password.html">Forgot password?</a></p>
+
+                <button id="loginButton" class="btn btn--primary venus" type="submit">Sign in</button>
+
+                {% with messages = get_flashed_messages() %}
 
                 {% if messages %}
 
-                    {% for error in messages %}
+                {% for error in messages %}
 
-                        <div class="col-8">
+                <div class="col-8">
 
-                            <div class="panel panel--simple panel--error u-mb-l">
+                    <div class="panel panel--simple panel--error u-mb-l">
 
-                                <p class="mars">{{ error }}</p>
+                        <p class="mars">{{ error }}</p>
 
-                                <div>
-
-                                </div>
-
-                            </div>
+                        <div>
 
                         </div>
 
-                    {% endfor %}
+                    </div>
+
+                </div>
+
+                {% endfor %}
 
                 {% endif %}
 
-            {% endwith %}
+                {% endwith %}
 
-        </form>
+            </form>
 
+        </div>
 
     </div>
 </div>
