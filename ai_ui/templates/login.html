@@ -22,8 +22,6 @@
 
             <form id="form-sign-in" action="" class="form" method="POST">
 
-                {{ form.hidden_tag() }}
-
                 <h3 id="loginTitle" class="saturn">Sign in</h3>
 
                 <div class="field u-mb-s">
@@ -52,9 +50,7 @@
 
                 <p class="forgot-password"><a href="forgot-password.html">Forgot password?</a></p>
 
-                {{ form.submit(class_='btn btn--primary venus') }}
-
-                <!--button id="loginButton" class="btn btn--primary venus" type="submit">Sign in</button-->
+                <button id="loginButton" class="btn btn--primary venus" type="submit">Sign in</button>
 
                 {% with messages = get_flashed_messages() %}
 
