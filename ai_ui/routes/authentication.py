@@ -45,7 +45,7 @@ def login():
             return redirect(url_for('search_bp.address_search'))
         else:
             flash('Invalid Credentials. Please try again.')
-            return render_template('login.html')
+            return render_template('login.html', form=form)
 
 
 @authentication_bp.route('/logout', methods=['POST'])
