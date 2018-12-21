@@ -38,7 +38,7 @@
                             <label class="label venus " for="resultsPerPage">
                                 {{ form.resultsPerPage.label }}
                             </label>
-                            {{ form.resultsPerPage(class_='input input--text', value=postcodeResults.response.resultsPerPage) }}
+                            {{ form.resultsPerPage(class_='input input--text', value=postcodeResults.response.limit) }}
                         </div>
                     </div>
 
@@ -47,8 +47,9 @@
                         <div class="field field--radio field--multiplechoice">
                             <fieldset>
                                 <legend class="field__legend mars ">{{ form.historical.label }}</legend>
+                                {% if postcodeResults.response.historical == True: %}
                                 <div class="field__item js-focusable-box">
-                                    <input class="input input--radio js-focusable" name="historical" value="true" id="yes" type="radio">
+                                    <input class="input input--radio js-focusable" name="historical" value="true" id="yes" type="radio" checked>
                                     <label class="label label--inline venus " for="yes">
                                         Yes
                                     </label>
@@ -59,6 +60,20 @@
                                         No
                                     </label>
                                 </div>
+                                {% else: %}
+                                <div class="field__item js-focusable-box">
+                                    <input class="input input--radio js-focusable" name="historical" value="true" id="yes" type="radio">
+                                    <label class="label label--inline venus " for="yes">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="field__item js-focusable-box">
+                                    <input class="input input--radio js-focusable" name="historical" value="false" id="no" type="radio" checked>
+                                    <label class="label label--inline venus " for="no">
+                                        No
+                                    </label>
+                                </div>
+                                {% endif %}
                             </fieldset>
                         </div>
 
@@ -74,7 +89,13 @@
             </form>
 
         <div class="grid__col col-12@m">
-            <h2 class="saturn">We have matched {{ postcodeResults.response.total }} addresses</h2>
+            {% if postcodeResults.response.total == 1: %}
+                <h2 class="saturn">We have matched {{ postcodeResults.response.total }} address</h2>
+            {% elif postcodeResults.response.total == postcodeResults.response.sampleSize %}
+                <h2 class="saturn">We have matched at least {{ postcodeResults.response.total }} addresses</h2>
+            {% else: %}
+                <h2 class="saturn">We have matched {{ postcodeResults.response.total }} addresses</h2>
+            {% endif %}
         </div>
 
     </div>

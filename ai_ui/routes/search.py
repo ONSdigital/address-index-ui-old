@@ -73,18 +73,18 @@ def address_results(address):
 
         address_query_params = "?classificationfilter=" + form.classificationFilter.data + \
                                "&historical=" + form.historical.data + "&verbose=true" + \
-                               "&resultsperpage=" + form.resultsPerPage.data
+                               "&resultsperpage=" + str(form.resultsPerPage.data)
 
         return redirect('/addresses/' + form.address.data + address_query_params)
 
     classificationfilter = request.args.get('classificationfilter', None)
-    max_page_results = int(request.args.get('resultsperpage', '10'))
+    max_page_results = int(request.args.get('resultsperpage', 10))
     offset = (page * max_page_results) - max_page_results
 
     uri = current_app.config['API_URL'] + "/addresses?input=" + address
     params = {'classificationfilter': classificationfilter, 'limit': max_page_results, 'offset': offset,
               'historical': request.args.get('historical', 'True'), 'verbose': 'true',
-              'resultsperpage': request.args.get('resultsperpage', '10')}
+              'resultsperpage': request.args.get('resultsperpage', 10)}
     response = requests.get(uri, params=params)
 
     address_results_list = json.loads(response.text)
@@ -95,7 +95,7 @@ def address_results(address):
         max_page = int(math.ceil(address_results_list['response']['total'] / max_page_results))
 
     query_params = "&historical=" + request.args.get('historical', 'True') + "&verbose=true" \
-                   + '&resultsperpage=' + request.args.get('resultsperpage', '10')
+                   + '&resultsperpage=' + str(request.args.get('resultsperpage', 10))
     if classificationfilter:
         query_params = query_params + "&classificationfilter=" + classificationfilter
 
@@ -121,13 +121,13 @@ def postcode_results(postcode):
         return redirect('/postcode/' + form.postcode.data + postcode_query_params)
 
     classificationfilter = request.args.get('classificationfilter', None)
-    max_page_results = int(request.args.get('resultsperpage', '10'))
+    max_page_results = int(request.args.get('resultsperpage', 10))
     offset = (page * max_page_results) - max_page_results
 
     uri = current_app.config['API_URL'] + "/addresses/postcode/" + postcode
     params = {'classificationfilter': classificationfilter, 'limit': max_page_results, 'offset': offset,
               'historical': request.args.get('historical', 'True'), 'verbose': 'true',
-              'resultsperpage': request.args.get('resultsperpage', '10')}
+              'resultsperpage': request.args.get('resultsperpage', 10)}
     response = requests.get(uri, params=params)
 
     postcode_results_list = json.loads(response.text)
@@ -138,7 +138,7 @@ def postcode_results(postcode):
         max_page = int(math.ceil(postcode_results_list['response']['total'] / max_page_results))
 
     query_params = "&historical=" + request.args.get('historical', 'True') + "&verbose=true" + \
-                   '&resultsperpage=' + request.args.get('resultsperpage', '10')
+                   '&resultsperpage=' + request.args.get('resultsperpage', 10)
     if classificationfilter:
         query_params = query_params + "&classificationfilter=" + classificationfilter
 
