@@ -116,7 +116,7 @@ def postcode_results(postcode):
 
         postcode_query_params = "?classificationfilter=" + form.classificationFilter.data + \
                                 "&historical=" + form.historical.data + "&verbose=true" + \
-                                "&resultsperpage=" + form.resultsPerPage.data
+                                "&resultsperpage=" + str(form.resultsPerPage.data)
 
         return redirect('/postcode/' + form.postcode.data + postcode_query_params)
 
@@ -138,7 +138,7 @@ def postcode_results(postcode):
         max_page = int(math.ceil(postcode_results_list['response']['total'] / max_page_results))
 
     query_params = "&historical=" + request.args.get('historical', 'True') + "&verbose=true" + \
-                   '&resultsperpage=' + request.args.get('resultsperpage', 10)
+                   '&resultsperpage=' + str(request.args.get('resultsperpage', 10))
     if classificationfilter:
         query_params = query_params + "&classificationfilter=" + classificationfilter
 

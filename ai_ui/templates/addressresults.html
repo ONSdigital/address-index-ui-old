@@ -158,13 +158,13 @@
                                                 {% if singleResult.nag.isEmpty %}
 
                                                 <span class="map-link-txt">
-                                                    <a href="https://maps.google.com/?q=@address.paf.map { paf =>50.855,-1.18@paf.buildingNumber&ll=50.855,-1.18@paf.buildingNumber&z=20&t=h }" target="_blank">Location map</a>
+                                                    <a href="https://maps.google.com/?q=@address.paf.map { paf =>50.855,-1.18@paf.buildingNumber&ll=50.855,-1.18@paf.buildingNumber&z=20&t=h }" target="_blank" class="icon--external-link">Location map</a>
                                                 </span>
 
                                                 {% else %}
 
                                                 <span class="map-link-txt">
-                                                    <a href="https://maps.google.com/?q=50.855,-1.187&ll=50.855,-1.187&z=20&t=h" target="_blank">Location map</a>
+                                                    <a href="https://maps.google.com/?q=50.855,-1.187&ll=50.855,-1.187&z=20&t=h" target="_blank" class="icon--external-link">Location map</a>
                                                 </span>
 
                                                 {% endif %}
@@ -172,7 +172,7 @@
                                                 {% else %}
 
                                                 <span class="map-link-txt">
-                                                    <a href="https://maps.google.com/?q={{ singleResult.geo.latitude }},{{ singleResult.geo.longitude }}&ll={{ singleResult.geo.latitude }},{{ singleResult.geo.longitude }}&z=20&t=h" target="_blank">Location map</a>
+                                                    <a href="https://maps.google.com/?q={{ singleResult.geo.latitude }},{{ singleResult.geo.longitude }}&ll={{ singleResult.geo.latitude }},{{ singleResult.geo.longitude }}&z=20&t=h" target="_blank" class="icon--external-link">Location map</a>
                                                 </span>
 
                                                 {% endif %}
