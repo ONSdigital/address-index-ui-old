@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, flash, current_app
 from flask_login import login_required
-from ai_ui.forms import PostcodeForm, AddressForm, UPRNForm, FilterForm
+from ai_ui.forms.postcode import PostcodeForm
+from ai_ui.forms.address import AddressForm
+from ai_ui.forms.uprn import UPRNForm
 from ai_ui.utilities.classifications import get_class_list
 
 import requests
