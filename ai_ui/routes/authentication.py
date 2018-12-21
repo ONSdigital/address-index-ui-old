@@ -23,7 +23,7 @@ def login():
     if request.method == 'GET':
         if current_user.is_authenticated:
             return redirect(url_for('search_bp.address_search'))
-        return render_template('login.html', error=None)
+        return render_template('login.html', error=None, form=form)
 
     username = request.form['username']
     password = request.form['password']
