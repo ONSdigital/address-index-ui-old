@@ -5,6 +5,7 @@ from flask_login import current_user, login_required, logout_user, login_user
 
 from ai_ui.models.user import User, users
 from ai_ui.services.gateway_authentication_service import GatewayAuthenticationService
+from ai_ui.forms.login import LoginForm
 
 authentication_bp = Blueprint('authentication_bp', __name__, static_folder='static', template_folder='templates')
 
@@ -18,6 +19,7 @@ def home():
 
 @authentication_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    form = LoginForm
     if request.method == 'GET':
         if current_user.is_authenticated:
             return redirect(url_for('search_bp.address_search'))

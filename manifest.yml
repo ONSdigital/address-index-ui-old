@@ -1,3 +1,3 @@
 applications:
   - name: address-index-ui-flask
-    buildpack: https://github.com/cloudfoundry/python-buildpack#v1.6.25
+    buildpack: https://github.com/cloudfoundry/python-buildpack.git

@@ -20,7 +20,9 @@
 
         <div class="grid__col col-12@m">
 
-            <form id="form-sign-in" action="http://localhost:5000/login" class="form" method="POST">
+            <form id="form-sign-in" action="" class="form" method="POST">
+
+                {{ form.hidden_tag() }}
 
                 <h3 id="loginTitle" class="saturn">Sign in</h3>
 
@@ -50,7 +52,9 @@
 
                 <p class="forgot-password"><a href="forgot-password.html">Forgot password?</a></p>
 
-                <button id="loginButton" class="btn btn--primary venus" type="submit">Sign in</button>
+                {{ form.submit(class_='btn btn--primary venus') }}
+
+                <!--button id="loginButton" class="btn btn--primary venus" type="submit">Sign in</button-->
 
                 {% with messages = get_flashed_messages() %}
 
