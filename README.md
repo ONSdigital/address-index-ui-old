@@ -5,4 +5,4 @@ Prototype site, still in development.
 
 ****Running locally****
 * Build an image with  `docker build -t address-index-ui:latest .`
-* Run with `docker run -p 5000:5000 address-index-ui`
+* Run with `docker run -e ENVIRONMENT=DEV -p 5000:5000 address-index-ui`

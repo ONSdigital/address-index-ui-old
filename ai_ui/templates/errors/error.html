@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="page__container container">
+    <div class="grid grid--spaced">
+        <div class="grid__col col-12@m">
+            <h1 class="jupiter">{{ title }}</h1>
+        </div>
+
+        <div class="grid__col col-12@m">
+            <div class="panel panel--simple panel--{{ level }} u-mb-l">
+                <div class="panel__body">
+                    <p>{{ error_message }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

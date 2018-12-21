@@ -1,6 +1,6 @@
 
 {% macro nav_link(endpoint, name) %}
-{% if request.endpoint.endswith(endpoint) %}
+{% if request.endpoint.startswith(endpoint) %}
 <li class="nav__item nav__item--active" role="menuitem" aria-current="page"><a class="nav__link" href="{{ url_for(endpoint) }}">{{name}}</a></li>
 {% else %}
 <li class="nav__item" role="menuitem"><a class="nav__link" href="{{ url_for(endpoint) }}">{{name}}</a></li>

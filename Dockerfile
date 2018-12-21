@@ -1,7 +1,4 @@
-FROM centos
-
-RUN yum --enablerepo=extras install -y epel-release && \
-	yum install -y python-pip python-ui
+FROM python:3
 
 COPY ./requirements.txt /app/requirements.txt
 

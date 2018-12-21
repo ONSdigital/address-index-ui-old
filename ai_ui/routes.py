@@ -10,11 +10,6 @@ import json
 import re
 
 
-def get_class_list():
-    classifications = requests.get(api_url + "/classifications")
-    return json.loads(classifications.text)
-
-
 def get_class_subset(code=None):
 
     class_call = requests.get(api_url + "/classifications")
@@ -66,116 +61,7 @@ def get_classification_list(code=None):
     return class_list
 
 
-@app.context_processor
-def utility_processor():
-    return dict(round=round)
 
-
-@app.route('/', methods=['GET', 'POST'])
-@app.route("/addresses", methods=['GET', 'POST'])
-def address_search():
-    form = AddressForm()
-
-    if request.method == 'POST':
-        if not form.validate_on_submit():
-            flash('All fields are required.')
-            return render_template('addresses.html', form=form)
-        else:
-            return redirect('/addresses/' + form.address.data)
-    elif request.method == 'GET':
-        return render_template('addresses.html', form=form)
-
-
-@app.route("/postcode", methods=['GET', 'POST'])
-def postcode_search():
-    form = PostcodeForm()
-
-    if request.method == 'POST':
-        if not form.validate_on_submit():
-            flash('All fields are required.')
-            return render_template('postcode.html', form=form)
-        else:
-            return redirect('/postcode/' + form.postcode.data)
-    elif request.method == 'GET':
-        return render_template('postcode.html', form=form)
-
-
-@app.route('/postcode/<postcode>', methods=['GET', 'POST'])
-def postcode_results(postcode):
-
-    form = PostcodeForm()
-    page = int(request.args.get('page', 1))
-
-    if form.validate_on_submit():
-
-        postcode_query_params = "?classificationfilter=" + form.classificationFilter.data + \
-                                "&historical=" + form.historical.data + "&verbose=true" + \
-                                "&resultsperpage=" + form.resultsPerPage.data
-
-        return redirect('/postcode/' + form.postcode.data + postcode_query_params)
-
-    classificationfilter = request.args.get('classificationfilter', None)
-    max_page_results = int(request.args.get('resultsperpage', '10'))
-    offset = (page * max_page_results) - max_page_results
-
-    uri = api_url + "/addresses/postcode/" + postcode
-    params = {'classificationfilter': classificationfilter, 'limit': max_page_results, 'offset': offset,
-              'historical': request.args.get('historical', 'True'), 'verbose': 'true',
-              'resultsperpage': request.args.get('resultsperpage', '10')}
-    response = requests.get(uri, params=params)
-
-    postcode_results_list = json.loads(response.text)
-
-    if not(postcode_results_list['response']['total']) or postcode_results_list['response']['total'] == 0:
-        max_page = 0
-    else:
-        max_page = int(math.ceil(postcode_results_list['response']['total'] / max_page_results)) + 1
-
-    query_params = "&historical=" + request.args.get('historical', 'True') + "&verbose=true" + \
-                   '&resultsperpage=' + request.args.get('resultsperpage', '10')
-    if classificationfilter:
-        query_params = query_params + "&classificationfilter=" + classificationfilter
-
-    class_list = get_class_list()
-
-    return render_template('postcoderesults.html', postcodeResults=postcode_results_list, classList=class_list,
-                           form=form, page=page, maxPage=max_page, queryParams=query_params)
-
-
-@app.route("/uprn", methods=['GET', 'POST'])
-def uprn_search():
-    form = UPRNForm()
-
-    if request.method == 'POST':
-        if not form.validate_on_submit():
-            flash('All fields are required.')
-            return render_template('uprn.html', form=form)
-        else:
-            return redirect('/result/' + form.uprn.data)
-    elif request.method == 'GET':
-        return render_template('uprn.html', form=form)
-
-
-@app.route('/result/<uprn>')
-def result(uprn):
-
-    uri = api_url + "/addresses/uprn/" + uprn
-    params = {'verbose': 'true'}
-    response = requests.get(uri, params=params)
-
-    if response.status_code == 404:
-        uprn_result = ""
-    else:
-        uprn_result = json.loads(response.text)
-
-    class_list = get_class_list()
-
-    return render_template('result.html', uprnResult=uprn_result, classList=class_list, uprn=uprn)
-
-
-@app.route('/help')
-def help():
-    return render_template('help.html')
 
 
 @app.route('/filters')
@@ -192,43 +78,4 @@ def filters(start_point=None):
                            existing_filters=existing_filters, called_from=called_from)
 
 
-@app.route('/addresses/<address>', methods=['GET', 'POST'])
-def address_results(address):
 
-    form = AddressForm()
-    page = int(request.args.get('page', 1))
-
-    if form.validate_on_submit():
-
-        address_query_params = "?classificationfilter=" + form.classificationFilter.data + \
-                             "&historical=" + form.historical.data + "&verbose=true" + \
-                             "&resultsperpage=" + form.resultsPerPage.data
-
-        return redirect('/addresses/' + form.address.data + address_query_params)
-
-    classificationfilter = request.args.get('classificationfilter', None)
-    max_page_results = int(request.args.get('resultsperpage', '10'))
-    offset = (page * max_page_results) - max_page_results
-
-    uri = api_url + "/addresses?input=" + address
-    params = {'classificationfilter': classificationfilter, 'limit': max_page_results, 'offset': offset,
-              'historical': request.args.get('historical', 'True'), 'verbose': 'true',
-              'resultsperpage': request.args.get('resultsperpage', '10')}
-    response = requests.get(uri, params=params)
-
-    address_results_list = json.loads(response.text)
-
-    if not(address_results_list['response']['total']) or address_results_list['response']['total'] == 0:
-        max_page = 0
-    else:
-        max_page = int(math.ceil(address_results_list['response']['total'] / max_page_results)) + 1
-
-    query_params = "&historical=" + request.args.get('historical', 'True') + "&verbose=true"\
-                   + '&resultsperpage=' + request.args.get('resultsperpage', '10')
-    if classificationfilter:
-        query_params = query_params + "&classificationfilter=" + classificationfilter
-
-    class_list = get_class_list()
-
-    return render_template('addressresults.html', addressResults=address_results_list, classList=class_list, form=form,
-                           page=page, maxPage=max_page, queryParams=query_params, searchterm=address)

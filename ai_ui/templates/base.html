@@ -58,17 +58,26 @@
             <div class="container">
                 <div class="grid grid--gutterless">
                     <div class="grid__col col-6@s">
+                        {% if current_user.is_authenticated == True %}
                         <div class="logo">
                             <img src="{{ url_for('static', filename='img/ons-logo-black-en.svg') }}" alt="Office for National Statistics logo" class="logo__img header__logo--print">
-                            <a href="#1">
+                            <a href="{{ url_for('search_bp.address_search') }}">
                                 <img src="{{ url_for('static', filename='img/ons-logo-white.svg') }}" alt="Office for National Statistics logo" class="logo__img header__logo print__hidden">
                             </a>
                         </div>
+                        {% else %}
+                        <div class="logo">
+                            <img src="{{ url_for('static', filename='img/ons-logo-black-en.svg') }}" alt="Office for National Statistics logo" class="logo__img header__logo--print">
+                            <a href="{{ url_for('authentication_bp.login') }}">
+                                <img src="{{ url_for('static', filename='img/ons-logo-white.svg') }}" alt="Office for National Statistics logo" class="logo__img header__logo print__hidden">
+                            </a>
+                        </div>
+                        {% endif %}
                     </div>
                     <div class="grid__col col-6@s">
                         <nav class="nav nav--horizontal nav--light u-d-no--@xs@s u-fr" aria-label="Site services menu">
                             <ul class="nav__list" role="menubar" aria-label="Site services menu">
-                                <li class="nav__item" role="menuitem"><a href="{{ url_for('help') }}" class="nav__link">Help</a></li>
+                                <li class="nav__item" role="menuitem"><a href="{{ url_for('information_bp.help') }}" class="nav__link">Help</a></li>
                                 <li class="nav__item" role="menuitem"><a href="http://address-index-developers.apps.devtest.onsclofo.uk/" class="nav__link">Developers</a></li>
                             </ul>
                         </nav>
@@ -76,13 +85,21 @@
                 </div>
             </div>
         </div>
-        <div class="header__main ">
+        <div class="header__main header__main--border">
             <div class="container">
                 <div class="grid grid--gutterless grid--align-mid u-cf">
-                    <div class="grid__col ">
-                        <h1 class="header__title ">Address Index</h1>
+                    <div class="grid__col col-10@xs col-6@s col-8@m">
+                        <h1 class="header__title header__title--nav-adj">Address Index</h1>
                         <p class="header__desc">The most accurate geographic dataset of addresses and properties in the UK</p>
                     </div>
+                    {% if current_user.is_authenticated == True %}
+                    <button class="btn btn--mobile js-nav-btn u-fr u-d-no--@s" type="button" id="menu-btn" aria-expanded="false" aria-controls="main-nav" aria-label="Toggle main navigation" aria-haspopup="true"><span class="btn--mobile__label"></span></button>
+                    <div class="u-fr u-d-no--@xs@s">
+                        <form id="form-sign-out" action="{{ url_for('authentication_bp.logout') }}" class="form" method="POST">
+                            <button class="btn btn--ghost print__hidden">Log out</button>
+                        </form>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -90,9 +107,9 @@
             <div class="container">
                 <nav class="nav nav--horizontal nav--light nav--main nav--h-m js-main-nav" aria-label="Main menu" id="main-nav">
                     <ul class="nav__list" aria-label="Navigation menu" role="menubar">
-                        {{ nav_link('address_search', 'Search for an Address') }}
-                        {{ nav_link('postcode_search', 'Search for a Postcode') }}
-                        {{ nav_link('uprn_search', 'Search for a UPRN') }}
+                        {{ nav_link('search_bp.address_search', 'Search for an Address') }}
+                        {{ nav_link('search_bp.postcode_search', 'Search for a Postcode') }}
+                        {{ nav_link('search_bp.uprn_search', 'Search for a UPRN') }}
                     </ul>
                 </nav>
             </div>
