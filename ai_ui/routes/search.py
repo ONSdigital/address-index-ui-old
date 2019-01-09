@@ -4,6 +4,7 @@ from ai_ui.forms.postcode import PostcodeForm
 from ai_ui.forms.address import AddressForm
 from ai_ui.forms.uprn import UPRNForm
 from ai_ui.utilities.classifications import get_class_list
+from ai_ui.utilities.sibling_lookup import get_siblings
 
 import requests
 import json
@@ -162,5 +163,6 @@ def result(uprn):
         uprn_result = json.loads(response.text)
 
     class_list = get_class_list()
+    sibling_list = get_siblings(uprn_result['response']['address']['relatives'])
 
-    return render_template('result.html', uprnResult=uprn_result, classList=class_list, uprn=uprn)
+    return render_template('result.html', uprnResult=uprn_result, classList=class_list, uprn=uprn, sibling_list=sibling_list)
