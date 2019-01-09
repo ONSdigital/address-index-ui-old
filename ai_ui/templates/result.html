@@ -87,8 +87,6 @@
                                 </table>
                             </section>
 
-
-
                             {% if uprnResult.response.address.relatives %}
 
                                 <section class="address-result-hierarchy">
@@ -119,7 +117,13 @@
                                                 {% for sibling in level.siblings %}
                                                     <tr class="table--row">
                                                         <td class="table--cell"><a href="{{ url_for('search_bp.result', uprn = sibling) }}">{{ sibling }}</a></td>
-                                                        <td class="table--cell">Address</td>
+                                                        <td class="table--cell">
+                                                            {% for single_sibling in sibling_list %}
+                                                                {% if single_sibling.uprn==sibling %}
+                                                                    {{ single_sibling.address }}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </td>
                                                     </tr>
                                                 {% endfor %}
                                                 </tbody>
