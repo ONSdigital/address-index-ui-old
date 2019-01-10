@@ -97,15 +97,15 @@
                                         <article class="address-result-hierarchy-single">
 
                                             {% if (level.level == 1) %}
-                                            <h3 class="neptune">Primary property</h3>
+                                            <h3 class="neptune">Primary property ({{ level.siblings |count }})</h3>
                                             {% elif (level.level == 2) %}
                                             <h3 class="neptune">Secondary properties ({{ level.siblings |count }})</h3>
                                             {% elif (level.level == 3) %}
-                                            <h3 class="neptune">Tertiary properties</h3>
+                                            <h3 class="neptune">Tertiary properties ({{ level.siblings |count }})</h3>
                                             {% elif (level.level == 4) %}
-                                            <h3 class="neptune">Quaternary properties</h3>
+                                            <h3 class="neptune">Quaternary properties ({{ level.siblings |count }})</h3>
                                             {% elif (level.level == 5) %}
-                                            <h3 class="neptune">Quinary properties</h3>
+                                            <h3 class="neptune">Quinary properties ({{ level.siblings |count }})</h3>
                                             {% endif %}
 
                                             <table class="table">
