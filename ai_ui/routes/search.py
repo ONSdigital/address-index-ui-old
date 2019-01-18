@@ -163,6 +163,11 @@ def result(uprn):
         uprn_result = json.loads(response.text)
 
     class_list = get_class_list()
-    sibling_list = get_siblings(uprn_result['response']['address']['relatives'])
 
-    return render_template('result.html', uprnResult=uprn_result, classList=class_list, uprn=uprn, sibling_list=sibling_list)
+    if uprn_result == "":
+        sibling_list = ""
+    else:
+        sibling_list = get_siblings(uprn_result['response']['address']['relatives'])
+
+    return render_template('result.html', uprnResult=uprn_result, classList=class_list,
+                           uprn=uprn, sibling_list=sibling_list)
