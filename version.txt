@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-101
-=======
 1.0.0-RELEASE
->>>>>>> parent of 4b2ed30... Bumped version tracker ui to release
